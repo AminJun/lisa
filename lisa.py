@@ -5,6 +5,7 @@ from torch.utils.data.dataset import Dataset
 import pandas as pd
 import pdb
 import os
+from tqdm import tqdm 
 
 
 class SlowDataset(Dataset):
@@ -22,15 +23,18 @@ class SlowDataset(Dataset):
         one_from_each_label = {}
         images = []
 
-        for i, row in table.iterrows():
+        for i, row in tqdm(table.iterrows()):
             file, label, x1, y1, x2, y2, *_ = row
             image = self._load_image(file, x1, y1, x2, y2)
             images.append(image)
             labels.append(label)
             if label not in one_from_each_label.keys():
                 one_from_each_label[label] = i
+                print(len(one_from_each_label))
+            if len(one_from_each_label) == 47:
+                break
 
-        for label, i in one_from_each_label:
+        for label, i in one_from_each_label.items():
             image: Image = images[i]
             image.save(os.path.join('examples', f'{label}.png'))
 
