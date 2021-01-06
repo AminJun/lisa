@@ -33,7 +33,7 @@ class SlowDataset(Dataset):
     def __init__(self):
         table = pd.read_csv(self.csv_root, delimiter=';')
         self.to_tensor = torchvision.transforms.ToTensor()
-        self.labels, self.images = self._read_images(table)
+        self.images, self.labels = self._read_images(table)
         self.save_images(self.images, self.labels)
         pdb.set_trace()
 
