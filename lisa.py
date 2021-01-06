@@ -15,7 +15,7 @@ class SlowDataset(Dataset):
 
     def _load_image(self, address: str, x1: int, y1: int, x2: int, y2: int) -> Image:
         image = Image.open(os.path.join(self.data_root, address))
-        return torchvision.transforms.functional.resized_crop(image, y1, x1, y2 - y1, x2 - x1, (32, 32))
+        return self.to_tensor(torchvision.transforms.functional.resized_crop(image, y1, x1, y2 - y1, x2 - x1, (32, 32)))
 
     def _read_images(self, table: pd.DataFrame) -> (list, list, list, dict):
         labels = []
