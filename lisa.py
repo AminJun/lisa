@@ -36,7 +36,7 @@ class SlowDataset(Dataset):
         table = pd.read_csv(self.csv_root, delimiter=';')
         self.to_tensor = torchvision.transforms.ToTensor()
         images, labels, classes, name_to_label = self._read_images(table)
-        self.images = torch.tensor(images)
+        self.images = torch.stack(images)
         self.labels = torch.tensor(labels)
         self.meta = {'classes': classes, 'name_to_label': name_to_label}
         self.save(self.images, self.labels, self.meta)
