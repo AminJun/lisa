@@ -41,6 +41,7 @@ class SlowDataset(Dataset):
             file, label, x1, y1, x2, y2, *_ = row
             image = Image.open(os.path.join(self.data_root, file))
             image.save(os.path.join('desktop', f'{i}_{label}_o.png'))
+            if i == 10: break
 
 
 def main():
