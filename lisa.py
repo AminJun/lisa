@@ -13,7 +13,7 @@ class SlowDataset(Dataset):
 
     def _load_image(self, address: str, x1: int, y1: int, x2: int, y2: int) -> torch.tensor:
         image = Image.open(os.path.join(self.data_root, address))
-        image = torchvision.transforms.functional.resized_crop(image, x1, y1, x2 - x1, y2 - y1, 32)
+        image = torchvision.transforms.functional.resized_crop(image, y1, x1, y2 - y1, x2 - x1, 32)
         return self.to_tensor(image)
 
     def __init__(self):
