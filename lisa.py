@@ -37,7 +37,10 @@ class SlowDataset(Dataset):
         self.to_tensor = torchvision.transforms.ToTensor()
         self.images, self.labels = self._read_images(table)
         self.save_images(self.images, self.labels)
-        pdb.set_trace()
+        for i, row in table.iterrows():
+            file, label, x1, y1, x2, y2, *_ = row
+            image = Image.open(os.path.join(self.data_root, file))
+            image.save(os.path.join('desktop', f'{i}_{label}_o.png'))
 
 
 def main():
