@@ -31,6 +31,7 @@ class SlowDataset(Dataset):
                 name_to_label[label] = len(classes)
                 classes.append(label)
             labels.append(name_to_label[label])
+            # if i == 10: break
         return images, labels, classes, name_to_label
 
     def __init__(self):
