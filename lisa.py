@@ -27,7 +27,7 @@ class SlowDataset(Dataset):
         return images, labels
 
     def save_images(self, images: list, labels: list):
-        for i, (image, label) in enumerate(zip(images, labels)):
+        for i, (image, label) in tqdm(enumerate(zip(images, labels))):
             image.save(os.path.join('desktop', f'{i}_{label}'))
 
     def __init__(self):
