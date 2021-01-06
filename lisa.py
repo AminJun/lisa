@@ -24,11 +24,13 @@ class SlowDataset(Dataset):
             image = self._load_image(file, x1, y1, x2, y2)
             images.append(image)
             labels.append(label)
+            if i == 10: break
         return images, labels
 
     def save_images(self, images: list, labels: list):
         for i, (image, label) in tqdm(enumerate(zip(images, labels))):
-            image.save(os.path.join('desktop', f'{i}_{label}'))
+            image.save(os.path.join('desktop', f'{i}_{label}.png'))
+            if i == 10: break
 
     def __init__(self):
         table = pd.read_csv(self.csv_root, delimiter=';')
