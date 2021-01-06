@@ -4,6 +4,7 @@ from PIL import Image
 from torch.utils.data.dataset import Dataset
 import pandas as pd
 import os
+import numpy as np
 import pdb
 import json
 from tqdm import tqdm
@@ -41,8 +42,11 @@ class SlowDataset(Dataset):
         self.meta = {'classes': classes, 'name_to_label': name_to_label}
         self.save(self.images, self.labels, self.meta)
 
-    def save(self, images: torch.tensor, labels: torch.tensor, meta: dict):
-        torch.save(images, 'images.tensor')
+    @staticmethod
+    def save(images: torch.tensor, labels: torch.tensor, meta: dict):
+        split = np.array_split(images, 3)
+        for i, sub in enumerate(split):
+            torch.save(sub, f'images_{i}.tensor')
         torch.save(labels, 'labels.tensor')
         with open('meta.js', 'w') as file:
             json.dump(meta, file)
