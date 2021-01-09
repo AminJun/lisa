@@ -39,7 +39,7 @@ class LISA(VisionDataset):
         if not self._check_integrity():
             raise RuntimeError('Dataset not found or corrupted. You can use download=True to download it')
 
-        self.images = torch.cat([torch.load(self._get_path(file)) for file in self.images_list], -1)
+        self.images = torch.cat([torch.load(self._get_path(file)) for file in self.images_list], 0)
         self.labels = torch.load(self._get_path(self.label_file))
         self._load_meta()
 
@@ -49,7 +49,7 @@ class LISA(VisionDataset):
             self.classes = data['classes']
             self.class_to_idx = data['name_to_label']
 
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> (torch.tensor, torch.tensor):
         """
         Args:
             index (int): Index
@@ -79,7 +79,7 @@ class LISA(VisionDataset):
 
 
 def main():
-    dataset = LISA(root='./data')
+    dataset = LISA(root='./data', download=True)
     pdb.set_trace()
 
 
