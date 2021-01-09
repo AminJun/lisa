@@ -76,12 +76,3 @@ class LISA(VisionDataset):
 
     def extra_repr(self) -> str:
         return "No Split Yet"
-
-
-def main():
-    dataset = LISA(root='./data', download=True)
-    pdb.set_trace()
-
-
-if __name__ == '__main__':
-    main()
