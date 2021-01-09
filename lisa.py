@@ -1,60 +1,86 @@
-import torch
-import torchvision
-from PIL import Image
-from torch.utils.data.dataset import Dataset
-import pandas as pd
-import os
-import numpy as np
-import pdb
 import json
-from tqdm import tqdm
+import os
+import pdb
+import torch
+from torchvision.datasets import VisionDataset
+from torchvision.datasets.utils import check_integrity, download_and_extract_archive
 
 
-class SlowDataset(Dataset):
-    csv_root = 'allAnnotations.csv'
-    data_root = 'data'
+class LISA(VisionDataset):
+    base_folder = 'lisa-batches'
+    url = "https://github.com/AminJun/lisa/releases/download/v1/lisa.tar.gz"
 
-    def _load_image(self, address: str, x1: int, y1: int, x2: int, y2: int) -> Image:
-        image = Image.open(os.path.join(self.data_root, address))
-        return self.to_tensor(torchvision.transforms.functional.resized_crop(image, y1, x1, y2 - y1, x2 - x1, (32, 32)))
+    zipped = {
+        'filename': 'lisa.tar.gz',
+        'md5': 'd3e7bd49dc55c2d9240d4b5473848dcb',
+    }
 
-    def _read_images(self, table: pd.DataFrame) -> (list, list, list, dict):
-        labels = []
-        name_to_label = {}
-        classes = []
-        images = []
-        for i, row in tqdm(table.iterrows()):
-            file, label, x1, y1, x2, y2, *_ = row
-            image = self._load_image(file, x1, y1, x2, y2)
-            images.append(image)
-            if label not in classes:
-                name_to_label[label] = len(classes)
-                classes.append(label)
-            labels.append(name_to_label[label])
-            # if i == 10: break
-        return images, labels, classes, name_to_label
+    label_file = 'labels.tensor'
+    meta_file = 'meta.js'
+    images_list = ['images_0.tensor', 'images_1.tensor', 'images_2.tensor']
 
-    def __init__(self):
-        table = pd.read_csv(self.csv_root, delimiter=';')
-        self.to_tensor = torchvision.transforms.ToTensor()
-        images, labels, classes, name_to_label = self._read_images(table)
-        self.images = torch.stack(images)
-        self.labels = torch.tensor(labels)
-        self.meta = {'classes': classes, 'name_to_label': name_to_label}
-        self.save(self.images, self.labels, self.meta)
+    checksum = {
+        'images_0.tensor': 'ac59f173c4d374859e73be64cee9de41',
+        'images_1.tensor': '13df95c1f3b05fc9a90a83cb0febe50f',
+        'images_2.tensor': '235f29c99e67019b1ba47dfe2492b461',
+        label_file: 'a68f3549adbf898b26f1ab76ab515d38',
+        meta_file: 'c52f0f118ff7e03c366608f7ea960d8f',
+    }
 
-    @staticmethod
-    def save(images: torch.tensor, labels: torch.tensor, meta: dict):
-        split = np.array_split(images, 3)
-        for i, sub in enumerate(split):
-            torch.save(sub, f'images_{i}.tensor')
-        torch.save(labels, 'labels.tensor')
-        with open('meta.js', 'w') as file:
-            json.dump(meta, file)
+    def _get_path(self, file: str) -> str:
+        return os.path.join(self.root, self.base_folder, file)
+
+    def __init__(self, root, download=False, transform=None, target_transform=None):
+        super(LISA, self).__init__(root=root, transform=transform, target_transform=target_transform)
+
+        if download:
+            self.download()
+
+        if not self._check_integrity():
+            raise RuntimeError('Dataset not found or corrupted. You can use download=True to download it')
+
+        self.images = torch.cat([torch.load(self._get_path(file)) for file in self.images_list], -1)
+        self.labels = torch.load(self._get_path(self.label_file))
+        self._load_meta()
+
+    def _load_meta(self):
+        with open(self._get_path(self.meta_file), 'r') as file:
+            data = json.load(file)
+            self.classes = data['classes']
+            self.class_to_idx = data['name_to_label']
+
+    def __getitem__(self, index):
+        """
+        Args:
+            index (int): Index
+
+        Returns:
+            tuple: (image, target) where target is index of the target class.
+        """
+        img, target = self.images[index], self.labels[index]
+        img = img if self.transform is None else self.transform(img)
+        target = target if self.target_transform is None else self.target_transform(target)
+        return img, target
+
+    def __len__(self) -> int:
+        return len(self.images)
+
+    def _check_integrity(self) -> bool:
+        return all(check_integrity(self._get_path(filename), md5) for filename, md5 in self.checksum.items())
+
+    def download(self):
+        if self._check_integrity():
+            print('Files already downloaded and verified')
+            return
+        download_and_extract_archive(self.url, self.root, **self.zipped)
+
+    def extra_repr(self) -> str:
+        return "No Split Yet"
 
 
 def main():
-    SlowDataset()
+    dataset = LISA(root='./data')
+    pdb.set_trace()
 
 
 if __name__ == '__main__':
