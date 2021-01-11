@@ -4,6 +4,7 @@ import pdb
 import torch
 from torchvision.datasets import VisionDataset
 from torchvision.datasets.utils import check_integrity, download_and_extract_archive
+from collections import Counter
 
 
 class LISA(VisionDataset):
@@ -30,7 +31,7 @@ class LISA(VisionDataset):
     def _get_path(self, file: str) -> str:
         return os.path.join(self.root, self.base_folder, file)
 
-    def __init__(self, root, download=False, transform=None, target_transform=None):
+    def __init__(self, root, train: bool, download=False, transform=None, target_transform=None):
         super(LISA, self).__init__(root=root, transform=transform, target_transform=target_transform)
 
         if download:
@@ -42,6 +43,9 @@ class LISA(VisionDataset):
         self.images = torch.cat([torch.load(self._get_path(file)) for file in self.images_list], 0)
         self.labels = torch.load(self._get_path(self.label_file))
         self._load_meta()
+
+        self.train = train
+        self._train_test_split()
 
     def _load_meta(self):
         with open(self._get_path(self.meta_file), 'r') as file:
@@ -76,3 +80,19 @@ class LISA(VisionDataset):
 
     def extra_repr(self) -> str:
         return "No Split Yet"
+
+    def _train_test_split(self, test_percent: float = 0.16):
+        classes = {}
+        for i, cl in enumerate(self.labels.numpy()):
+            arr = classes.get(cl, [])
+            arr.append(i)
+            classes[cl] = arr
+
+        train, test = [], []
+        for cl, arr in classes.items():
+            split_index = int(len(arr) * test_percent)
+            test = test + arr[:split_index]
+            train = train + arr[split_index:]
+
+        sub = train if self.train else test
+        self.images, self.labels = self.images[sub], self.labels[sub]
