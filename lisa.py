@@ -4,7 +4,6 @@ import pdb
 import torch
 from torchvision.datasets import VisionDataset
 from torchvision.datasets.utils import check_integrity, download_and_extract_archive
-from collections import Counter
 
 
 class LISA(VisionDataset):
