@@ -26,12 +26,22 @@ There are some figures of the images presented in the examples folder.
 Here are the 5 classes that (I guess) authors of Activation Clustering paper use for classification:
 
 Stop signs:
+
 ![Stop Signs](/examples/png/stop.png)
+
+
 Yield Signs:
+
 ![Yield Signs](/examples/png/yield.png)
+
 Warning Signs:
+
 ![Warning Signs](/examples/png/warning.png)
+
 Speed Limit Signs:
+
 ![Speed Limit Signs](/examples/png/speed.png)
+
 Regulatory Signs:
+
 ![Regulatory Signs](/examples/png/regulatory.png)
