@@ -1,6 +1,6 @@
-#LISA Dataset for Classification
+# LISA Dataset for Classification
 
-LISA is a dataset, mainly used for detection tasks.
+[LISA](http://cvrr.ucsd.edu/LISA/lisa-traffic-sign-dataset.html) is a dataset, mainly used for detection tasks.
 It contains images of traffic signs taken from video shots of driving vehicles.
 During my research, I came across [Detecting Backdoor Attacks on Deep Neural Networks by Activation Clustering](https://arxiv.org/pdf/1811.03728.pdf), 
 which uses clustering as a defense against backdoor attacks. 
@@ -28,7 +28,6 @@ Here are the 5 classes that (I guess) authors of Activation Clustering paper use
 Stop signs:
 
 ![Stop Signs](/examples/png/stop.png)
-
 
 Yield Signs:
 
