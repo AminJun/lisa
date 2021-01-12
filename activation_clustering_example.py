@@ -54,8 +54,8 @@ def main():
         images = [img for img, y in dataset if y == i]
         images = torch.stack(images)
         indices = torch.randperm(len(images))
-        images = images[indices[:400]]
-        save_image(images, f'examples/png/{name}.png', nrow=20)
+        images = images[indices[:100]]
+        save_image(images, f'examples/png/{name}.png', nrow=10)
 
 
 if __name__ == '__main__':
