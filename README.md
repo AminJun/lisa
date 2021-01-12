@@ -18,8 +18,13 @@ from lisa import LISA
 dataset = LISA(root='path_to_data', download=True, train=True)
 
 ```
-
 To reproduce the results of Activation Clustering paper, look at the `activation_clustering_example.py` code. 
+
+
+### Dataset Properties
+To train networks, one might need `mean` and `std` of the dataset. It's as following: 
+* mean: `[0.4563, 0.4076, 0.3895]`
+* std: `[0.2298, 0.2144, 0.2259]`
 
 ### Examples 
 There are some figures of the images presented in the examples folder. 
