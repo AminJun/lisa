@@ -55,7 +55,7 @@ def main():
         images = torch.stack(images)
         indices = torch.randperm(len(images))
         images = images[indices[:400]]
-        save_image(images, f'ac_temp/{name}.pdf', nrow=20)
+        save_image(images, f'examples/png/{name}.png', nrow=20)
 
 
 if __name__ == '__main__':
