@@ -1,11 +1,7 @@
-import pdb
-from typing import Union
-
 import torch
+from typing import Union
 from torchvision.utils import save_image
-
 from lisa import LISA
-from tqdm import tqdm
 
 
 class Translator:
@@ -27,7 +23,8 @@ class Translator:
             'ahead': 'warning',
             'stop': 'stop',
             'yield': 'yield',
-            'speedLimit': 'speed',
+            # 'speedLimit': 'speed', I have doubt how the authors of paper did with warning speed limits
+            'speed': 'speed',  # Same doubt here
             'zoneAhead': 'speed',
         }
         self.reverse_map = ['stop', 'yield', 'speed', 'warning', 'regulatory']
@@ -37,8 +34,8 @@ class Translator:
         for n, o in self.easy_map.items():
             if n.lower() in name.lower():
                 return o
-        if 'speed' in name.lower():
-            return 'warning'
+        # if 'speed' in name.lower():
+        #     return 'warning'
         if name.lower() in self.warnings:
             return 'warning'
         return 'regulatory'
@@ -47,9 +44,14 @@ class Translator:
         return self.numerical_map[self.translate(self.signs[y])]
 
 
+class ActivationClusteringLISA(LISA):
+    def __init__(self, root, train: bool, download=False, transform=None):
+        super().__init__(root=root, train=train, download=download, transform=transform, target_transform=Translator())
+
+
 def main():
     translator = Translator()
-    dataset = LISA(download=True, root='./data', train=True, target_transform=translator)
+    dataset = ActivationClusteringLISA(download=True, root='./data', train=True)
     for name, i in translator.numerical_map.items():
         images = [img for img, y in dataset if y == i]
         images = torch.stack(images)
