@@ -20,12 +20,12 @@ class Translator:
                     'intersection', 'curveRight', 'curveLeft', 'turnRight', ]
         self.warnings = [w.lower() for w in warnings]
         self.easy_map = {
+            'zoneAhead': 'speed',
             'ahead': 'warning',
             'stop': 'stop',
             'yield': 'yield',
             # 'speedLimit': 'speed', I have doubt how the authors of paper did with warning speed limits
             'speed': 'speed',  # Same doubt here
-            'zoneAhead': 'speed',
         }
         self.reverse_map = ['stop', 'yield', 'speed', 'warning', 'regulatory']
         self.numerical_map = {key: i for i, key in enumerate(self.reverse_map)}
